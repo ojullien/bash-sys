@@ -116,7 +116,7 @@ FileSystem::createDirectory "${m_INSTALLSHELL_DIR_DESTINATION}"
 iReturn=$?
 ((0!=iReturn)) && exit ${iReturn}
 
-FileSystem::moveFile "${m_INSTALLSHELL_DIR_SOURCE}" "${m_INSTALLSHELL_DIR_DESTINATION}/${m_INSTALLSHELL_PROJECT_NAME}"
+FileSystem::copyFile "${m_INSTALLSHELL_DIR_SOURCE}" "${m_INSTALLSHELL_DIR_DESTINATION}/${m_INSTALLSHELL_PROJECT_NAME}"
 iReturn=$?
 ((0!=iReturn)) && exit ${iReturn}
 
