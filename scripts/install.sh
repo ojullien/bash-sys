@@ -33,7 +33,7 @@ readonly m_INSTALLSHELL_DIR_SOURCE="$(realpath "${m_DIR_REALPATH}/../src")"
 # Directory destination
 readonly m_INSTALLSHELL_DIR_DESTINATION="/opt/oju"
 # Directory to install
-readonly m_INSTALLSHELL_PROJECT_NAME="Bash"
+readonly m_INSTALLSHELL_PROJECT_NAME="bash"
 
 ## -----------------------------------------------------------------------------
 ## Defines main files
@@ -110,45 +110,39 @@ Console::waitUser
 
 FileSystem::removeDirectory "${m_INSTALLSHELL_DIR_DESTINATION}/${m_INSTALLSHELL_PROJECT_NAME}"
 iReturn=$?
-((0!=iReturn)) && return ${iReturn}
+((0!=iReturn)) && exit ${iReturn}
 
 FileSystem::createDirectory "${m_INSTALLSHELL_DIR_DESTINATION}"
 iReturn=$?
-((0!=iReturn)) && return ${iReturn}
+((0!=iReturn)) && exit ${iReturn}
 
 FileSystem::moveFile "${m_INSTALLSHELL_DIR_SOURCE}" "${m_INSTALLSHELL_DIR_DESTINATION}/${m_INSTALLSHELL_PROJECT_NAME}"
 iReturn=$?
-((0!=iReturn)) && return ${iReturn}
+((0!=iReturn)) && exit ${iReturn}
 
 String::notice -n "Change owner:"
 chown -R root:root "${m_INSTALLSHELL_DIR_DESTINATION}"
 iReturn=$?
 String::checkReturnValueForTruthiness ${iReturn}
-((0!=iReturn)) && return ${iReturn}
+((0!=iReturn)) && exit ${iReturn}
 
 String::notice -n "Change common directories access rights:"
 find "${m_INSTALLSHELL_DIR_DESTINATION}" -type d -exec chmod u=rwx,g=rx,o=rx {} \;
 iReturn=$?
 String::checkReturnValueForTruthiness ${iReturn}
-((0!=iReturn)) && return ${iReturn}
+((0!=iReturn)) && exit ${iReturn}
 
 String::notice -n "Change log directory access rights:"
 find "${m_INSTALLSHELL_DIR_DESTINATION}/${m_INSTALLSHELL_PROJECT_NAME}/log" -type d -exec chmod u=rwx,g=rwx,o=rwx {} \;
 iReturn=$?
 String::checkReturnValueForTruthiness ${iReturn}
-((0!=iReturn)) && return ${iReturn}
+((0!=iReturn)) && exit ${iReturn}
 
 String::notice -n "Change files access rights:"
 find "${m_INSTALLSHELL_DIR_DESTINATION}/${m_INSTALLSHELL_PROJECT_NAME}" -type f -exec chmod u=rw,g=r,o=r {} \;
 iReturn=$?
 String::checkReturnValueForTruthiness ${iReturn}
-((0!=iReturn)) && return ${iReturn}
-
-String::notice -n "Change sh files access rights:"
-chmod +x ${m_INSTALLSHELL_DIR_DESTINATION}/${m_INSTALLSHELL_PROJECT_NAME}/bin/*.sh
-iReturn=$?
-String::checkReturnValueForTruthiness ${iReturn}
-((0!=iReturn)) && return ${iReturn}
+((0!=iReturn)) && exit ${iReturn}
 
 ## -----------------------------------------------------------------------------
 ## END
