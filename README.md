@@ -2,13 +2,15 @@
 
 Bash framework. Provides generic functionality to facilitate development of my personal bash scripts.
 
+*Note: I use these scripts for my own projects, they contains only the features I need.*
+
 ## Table of Contents
 
 [Installation](#installation) | [Features](#features) | [Documentation](#documentation) | [Test](#test) | [Contributing](#contributing) | [License](#license)
 
 ## Installation
 
-Require a Debian/Ubuntu version of linux and a Bash version ~4.4.
+Requires a Debian/Ubuntu version of linux and a Bash version ~4.4.
 
 1. [Download a release](https://github.com/ojullien/bash-sys/releases) or clone this repository.
 2. Use [scripts/install.sh](https://github.com/ojullien/bash-sys/tree/master/scripts) to automatically install the project in the /opt/ folder.
@@ -46,7 +48,7 @@ I wrote few lines of 'unit test' code. No more, sorry.
 
 Thanks you for taking the time to contribute. Please fork the repository and make changes as you'd like.
 
-As I use these scripts for my own projects, it contains only the features I need. But If you have any ideas, just open an [issue](https://github.com/ojullien/bash-sys/issues/new) and tell me what you think. Pull requests are also warmly welcome.
+As I use these scripts for my own projects, they contain only the features I need. But If you have any ideas, just open an [issue](https://github.com/ojullien/bash-sys/issues/new) and tell me what you think. Pull requests are also warmly welcome.
 
 If you encounter any **bugs**, please open an [issue](https://github.com/ojullien/bash-sys/issues/new).
 

@@ -23,7 +23,7 @@ Option::showHelp() {
 }
 
 Option::showVersion() {
-    String::notice "\tVersion: 20190322"
+    String::notice "\tVersion: v3.2.0 20190701"
     return 0
 }
 
