@@ -3,7 +3,7 @@
 ## Linux Scripts.
 ## Install the bash-sys project into the /opt/oju/bash directory.
 ##
-## @package ojullien\bash
+## @package ojullien\bash\scripts
 ## @license MIT <https://github.com/ojullien/bash-sys/blob/master/LICENSE>
 ## -----------------------------------------------------------------------------
 #set -o errexit
@@ -24,16 +24,17 @@ readonly m_DATE="$(date +"%Y%m%d")_$(date +"%H%M")"
 ## Defines main directories
 ## -----------------------------------------------------------------------------
 
-# Directory holds system files
-readonly m_DIR_SYS="$(realpath "${m_DIR_REALPATH}/../src/sys")"
-# Directory holds apps
-readonly m_DIR_APP="$(realpath "${m_DIR_REALPATH}/../src/app")"
-# Directory destination
-readonly m_INSTALLSHELL_DIR_SOURCE="$(realpath "${m_DIR_REALPATH}/../src")"
-# Directory destination
-readonly m_INSTALLSHELL_DIR_DESTINATION="/opt/oju"
-# Directory to install
-readonly m_INSTALLSHELL_PROJECT_NAME="bash"
+# DESTINATION
+readonly m_INSTALL_DESTINATION_PROJECT_NAME="bash"
+readonly m_INSTALL_DESTINATION_DIR="/opt/oju"
+readonly m_DIR_APP="${m_INSTALL_DESTINATION_DIR}/${m_INSTALL_DESTINATION_PROJECT_NAME}/app" # Directory holds apps
+readonly m_DIR_BIN="${m_INSTALL_DESTINATION_DIR}/${m_INSTALL_DESTINATION_PROJECT_NAME}/bin" # Directory holds app entry point
+readonly m_DIR_LOG="${m_INSTALL_DESTINATION_DIR}/${m_INSTALL_DESTINATION_PROJECT_NAME}/log" # Directory holds log files
+readonly m_INSTALL_DESTINATION_DIR_SYS="${m_INSTALL_DESTINATION_DIR}/${m_INSTALL_DESTINATION_PROJECT_NAME}/sys" # Directory holds system files
+
+# SOURCE
+readonly m_INSTALL_APP_NAME="sys"
+readonly m_DIR_SYS="$(realpath "${m_DIR_REALPATH}/../src/${m_INSTALL_APP_NAME}")"
 
 ## -----------------------------------------------------------------------------
 ## Defines main files
@@ -55,12 +56,12 @@ readonly COLORRESET="$(tput -Txterm sgr0)"
 Constant::trace() {
     String::separateLine
     String::notice "Main configuration"
-    FileSystem::checkDir "\tScript directory:\t\t${m_DIR_REALPATH}" "${m_DIR_REALPATH}"
-    FileSystem::checkDir "\tSystem directory:\t\t${m_DIR_SYS}" "${m_DIR_SYS}"
-    FileSystem::checkDir "\tApp directory:\t\t\t${m_DIR_APP}" "${m_DIR_APP}"
+    FileSystem::checkDir "\tSource directory:\t\t${m_DIR_SYS}" "${m_DIR_SYS}"
+    FileSystem::checkDir "\tDestination app directory:\t\t\t${m_DIR_APP}" "${m_DIR_APP}"
+    FileSystem::checkDir "\tDestination bin directory:\t\t\t${m_DIR_BIN}" "${m_DIR_BIN}"
+    FileSystem::checkDir "\tDestination log directory:\t\t\t${m_DIR_LOG}" "${m_DIR_LOG}"
+    FileSystem::checkDir "\tDestination sys directory:\t\t\t${m_INSTALL_DESTINATION_DIR_SYS}" "${m_INSTALL_DESTINATION_DIR_SYS}"
     FileSystem::checkFile "\tLog file is:\t\t\t${m_LOGFILE}" "${m_LOGFILE}"
-    String::notice "Distribution"
-    (( m_OPTION_DISPLAY )) && lsb_release --all
     return 0
 }
 
@@ -84,21 +85,17 @@ Constant::trace() {
 ((m_OPTION_SHOWHELP)) && Option::showHelp && exit 0
 
 ## -----------------------------------------------------------------------------
-## Install packages system
+## creates destination
 ## -----------------------------------------------------------------------------
-String::separateLine
-apt-get install "lsb-release" --yes --quiet
-Console::waitUser
+mkdir --parents "${m_DIR_APP}" "${m_DIR_BIN}" "${m_DIR_LOG}"\
+&& chmod -R u=rwx,g=rx,o=rx "${m_INSTALL_DESTINATION_DIR}"\
+&& chmod u=rwx,g=rwx,o=rwx "${m_DIR_LOG}"
 
 ## -----------------------------------------------------------------------------
 ## Trace
 ## -----------------------------------------------------------------------------
 Constant::trace
-String::separateLine
-String::notice "App configuration: installShell"
-FileSystem::checkDir "\tSource directory:\t${m_INSTALLSHELL_DIR_SOURCE}" "${m_INSTALLSHELL_DIR_SOURCE}"
-FileSystem::checkDir "\tDestination directory:\t${m_INSTALLSHELL_DIR_DESTINATION}" "${m_INSTALLSHELL_DIR_DESTINATION}"
-String::notice "\tProject name:\t\t${m_INSTALLSHELL_PROJECT_NAME}"
+Console::waitUser
 
 ## -----------------------------------------------------------------------------
 ## Start
@@ -108,38 +105,28 @@ String::notice "Today is: $(date -R)"
 String::notice "The PID for $(basename "$0") process is: $$"
 Console::waitUser
 
-FileSystem::removeDirectory "${m_INSTALLSHELL_DIR_DESTINATION}/${m_INSTALLSHELL_PROJECT_NAME}"
+FileSystem::removeDirectory "${m_INSTALL_DESTINATION_DIR_SYS}"
 iReturn=$?
 ((0!=iReturn)) && exit ${iReturn}
 
-FileSystem::createDirectory "${m_INSTALLSHELL_DIR_DESTINATION}"
-iReturn=$?
-((0!=iReturn)) && exit ${iReturn}
-
-FileSystem::copyFile "${m_INSTALLSHELL_DIR_SOURCE}" "${m_INSTALLSHELL_DIR_DESTINATION}/${m_INSTALLSHELL_PROJECT_NAME}"
+FileSystem::copyFile "${m_DIR_SYS}" "${m_INSTALL_DESTINATION_DIR}/${m_INSTALL_DESTINATION_PROJECT_NAME}"
 iReturn=$?
 ((0!=iReturn)) && exit ${iReturn}
 
 String::notice -n "Change owner:"
-chown -R root:root "${m_INSTALLSHELL_DIR_DESTINATION}"
+chown -R root:root "${m_INSTALL_DESTINATION_DIR_SYS}"
 iReturn=$?
 String::checkReturnValueForTruthiness ${iReturn}
 ((0!=iReturn)) && exit ${iReturn}
 
-String::notice -n "Change common directories access rights:"
-find "${m_INSTALLSHELL_DIR_DESTINATION}" -type d -exec chmod u=rwx,g=rx,o=rx {} \;
-iReturn=$?
-String::checkReturnValueForTruthiness ${iReturn}
-((0!=iReturn)) && exit ${iReturn}
-
-String::notice -n "Change log directory access rights:"
-find "${m_INSTALLSHELL_DIR_DESTINATION}/${m_INSTALLSHELL_PROJECT_NAME}/log" -type d -exec chmod u=rwx,g=rwx,o=rwx {} \;
+String::notice -n "Change directories access rights:"
+find "${m_INSTALL_DESTINATION_DIR_SYS}" -type d -exec chmod u=rwx,g=rx,o=rx {} \;
 iReturn=$?
 String::checkReturnValueForTruthiness ${iReturn}
 ((0!=iReturn)) && exit ${iReturn}
 
 String::notice -n "Change files access rights:"
-find "${m_INSTALLSHELL_DIR_DESTINATION}/${m_INSTALLSHELL_PROJECT_NAME}" -type f -exec chmod u=rw,g=r,o=r {} \;
+find "${m_INSTALL_DESTINATION_DIR_SYS}" -type f -exec chmod u=rw,g=r,o=r {} \;
 iReturn=$?
 String::checkReturnValueForTruthiness ${iReturn}
 ((0!=iReturn)) && exit ${iReturn}
