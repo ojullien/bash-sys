@@ -2,7 +2,7 @@
 
 Bash framework. Provides generic functionality to facilitate development of my personal bash scripts.
 
-*Note: I use these scripts for my own projects, they contains only the features I need.*
+*Note: I use these scripts for my own projects, they contain only the features I need.*
 
 ## Table of Contents
 
@@ -14,7 +14,7 @@ Requires a Debian/Ubuntu version of linux and a Bash version ~4.4.
 
 1. [Download a release](https://github.com/ojullien/bash-sys/releases) or clone this repository.
 2. Use [scripts/install.sh](https://github.com/ojullien/bash-sys/tree/master/scripts) to automatically install the project in the /opt/ folder.
-3. If needed, add `PATH="$PATH:/opt/oju/bash-sys/bin"` to the .profile files.
+3. If needed, add `PATH="$PATH:/opt/oju/bash/bin"` to the .profile files.
 
 ## Features
 
