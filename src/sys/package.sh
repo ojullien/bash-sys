@@ -46,10 +46,11 @@ Package::upgrade() {
     String::checkReturnValueForTruthiness ${iReturn}
 
     # Install the newest versions of all packages currently installed on the system
+    # and, intelligently handles changing dependencies with new versions of packages.
     if ((0==iReturn)); then
         String::separateLine
         String::notice "Upgrading..."
-        apt-get upgrade --yes ${sOption}
+        apt-get dist-upgrade --yes ${sOption}
         iReturn=$?
         String::notice -n "Upgrade status:"
         String::checkReturnValueForTruthiness ${iReturn}
