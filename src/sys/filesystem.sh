@@ -254,3 +254,76 @@ FileSystem::findToRemove() {
 
     return ${iReturn}
 }
+
+## -----------------------------------------------------------------------------
+## Compare files and copy source to destination if files differ
+## -----------------------------------------------------------------------------
+FileSystem::copyDiffFiles() {
+    # Parameters
+    if (($# != 3)) || [[ -z "$1" ]] || [[ -z "$2" ]] || [[ -z "$3" ]]; then
+        String::error "Usage: FileSystem::copyDiffFiles <source directory pathname> <destination directory pathname> <filename filter>"
+        return 1
+    fi
+    
+    # Init
+    local sFile="" sSourceDirPathname="$(realpath "$1")" sDestinationDirPathname="$(realpath "$2")" sFilenameFilter="$3"
+    local -i iReturn=0 iDiffer=0
+    local -a aFiles
+    
+    # Save current conf file name
+    mapfile -t aFiles < <(find "${sSourceDirPathname}" -type f -iname "${sFilenameFilter}" -printf "%f\n")
+    iReturn=$?
+    ((0!=iReturn)) && return ${iReturn}
+    
+    for sFile in "${aFiles[@]}"; do
+        
+        diff -iwq "${sSourceDirPathname}/${sFile}" "${sDestinationDirPathname}/${sFile}"
+        iDiffer=$?
+        
+        if ((iDiffer)); then           
+            FileSystem::copyFile "${sSourceDirPathname}/${sFile}" "${sDestinationDirPathname}/${sFile}"
+            iReturn=$?
+            ((0!=iReturn)) && return ${iReturn}
+        fi
+    done
+    
+    return ${iReturn}
+}
+
+## -----------------------------------------------------------------------------
+## Compare recursively files and directories of the same name then copy source 
+## to destination if files differ
+## -----------------------------------------------------------------------------
+FileSystem::copyDiffFilesRecursive() {
+    # Parameters
+    if (($# != 2)) || [[ -z "$1" ]] || [[ -z "$2" ]]; then
+        String::error "Usage: FileSystem::copyDiffFilesRecursive <source directory pathname> <destination directory pathname>"
+        return 1
+    fi
+
+   # Init
+    local sSourceFilename="" sDestinationFilename="" sSourceDirPathname="$(realpath "$1")" sDestinationDirPathname="$(realpath "$2")"
+    local -i iReturn=0 iDiffer=0
+    local -a aFiles
+
+    # Find all files in source directory
+    mapfile -t aFiles < <(find "${sSourceDirPathname}" -type f -printf "%h/%f\n")
+    iReturn=$?
+    ((0!=iReturn)) && return ${iReturn}
+
+    # Copy files if differ or not exists in destination directory
+    for sSourceFilename in "${aFiles[@]}"; do
+        sDestinationFilename=${sSourceFilename#"$sSourceDirPathname"}
+        diff -iwq "${sSourceFilename}" "${sDestinationDirPathname}${sDestinationFilename}"
+        iDiffer=$?
+
+        if ((iDiffer)); then
+            FileSystem::copyFile "${sSourceFilename}" "${sDestinationDirPathname}${sDestinationFilename}"
+            iReturn=$?
+            ((0!=iReturn)) && return ${iReturn}
+        fi
+    done
+
+    return ${iReturn}
+}
+
