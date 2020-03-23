@@ -266,7 +266,7 @@ FileSystem::copyDiffFiles() {
     fi
     
     # Init
-    local sFile="" sSourceDirPathname="$(realpath "$1")" sDestinationDirPathname="$(realpath "$2")" sFilenameFilter="$3"
+    local sFile="" sSourceDirPathname="$1" sDestinationDirPathname="$2" sFilenameFilter="$3"
     local -i iReturn=0 iDiffer=0
     local -a aFiles
     
@@ -302,7 +302,7 @@ FileSystem::copyDiffFilesRecursive() {
     fi
 
    # Init
-    local sSourceFilename="" sDestinationFilename="" sSourceDirPathname="$(realpath "$1")" sDestinationDirPathname="$(realpath "$2")"
+    local sSourceFilename="" sDestinationFilename="" sSourceDirPathname="$1" sDestinationDirPathname="$2"
     local -i iReturn=0 iDiffer=0
     local -a aFiles
 
