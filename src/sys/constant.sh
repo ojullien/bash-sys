@@ -45,6 +45,6 @@ Constant::trace() {
     FileSystem::checkDir "\tApp directory:\t\t${m_DIR_APP}" "${m_DIR_APP}"
     FileSystem::checkFile "\tLog file is:\t\t${m_LOGFILE}" "${m_LOGFILE}"
     String::notice "Distribution"
-    (( m_OPTION_DISPLAY )) && lsb_release --all
+    (( m_OPTION_DISPLAY )) && lsb_release --description --codename
     return 0
 }
