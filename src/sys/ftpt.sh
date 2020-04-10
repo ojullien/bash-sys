@@ -1,6 +1,6 @@
 ## -----------------------------------------------------------------------------
 ## Linux Scripts.
-## FTP functions
+## FTP functions with timeout
 ##
 ## @package ojullien\bash\sys
 ## @license MIT <https://github.com/ojullien/bash-sys/blob/master/LICENSE>
@@ -28,7 +28,7 @@ FTP::verbosePut() {
     local -i iReturn=1 iWordCount=0
 
     # Do the job
-    ftp -vpin "${sHost}" <<END_SCRIPT >> "${sLogFile}" 2> "${sErrorFile}"
+    timeout 30 ftp -vpin "${sHost}" <<END_SCRIPT >> "${sLogFile}" 2> "${sErrorFile}"
 quote USER ${sUser}
 quote PASS ${sPass}
 binary
@@ -75,7 +75,7 @@ FTP::put() {
     local -i iReturn=1 iWordCount=0
 
     # Do the job
-    ftp -pin "${sHost}" <<END_SCRIPT 2> "${sErrorFile}"
+    timeout 30 ftp -pin "${sHost}" <<END_SCRIPT 2> "${sErrorFile}"
 quote USER ${sUser}
 quote PASS ${sPass}
 binary
